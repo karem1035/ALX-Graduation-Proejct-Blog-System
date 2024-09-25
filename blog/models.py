@@ -1,3 +1,11 @@
+"""
+Models for the blog application.
+
+This module contains the models for the blog application. The models are used
+to store the data for the blog posts.
+
+"""
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -5,7 +13,18 @@ from django.urls import reverse
 
 
 class PublishedManager(models.Manager):
+    """
+    Custom manager for the `Post` model that retrieves published posts.
+
+    """
+
     def get_queryset(self):
+        """
+        Return a queryset of all published posts.
+
+        :return: a queryset of all published posts
+        :rtype: QuerySet
+        """
         return (
             super().get_queryset().filter(status=Post.Status.PUBLISHED)
         )
