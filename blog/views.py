@@ -1,14 +1,23 @@
 
 from django.core.mail import send_mail
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
-from .models import Post
 from django.views.generic import ListView
+from .models import Post
 from .forms import CommentForm, EmailPostForm
 
 
 def post_detail(request, year, month, day, post):
+    """
+    Displays a single post with all its active comments.
+
+    :param request: the current request
+    :param year: the year of the post
+    :param month: the month of the post
+    :param day: the day of the post
+    :param post: the slug of the post
+    :return: the rendered post detail page
+    """
     post = get_object_or_404(
         Post,
         status=Post.Status.PUBLISHED,
@@ -35,9 +44,11 @@ def post_detail(request, year, month, day, post):
 
 class PostListView(ListView):
     """
-        Alternative post list view
-    """
+    Generic view to display all published posts.
 
+    :param request: the current request
+    :return: the rendered post list page
+    """
     queryset = Post.published.all()
     context_object_name = 'posts'
     paginate_by = 3
@@ -45,6 +56,13 @@ class PostListView(ListView):
 
 
 def post_share(request, post_id):
+    """
+    Share a post by email.
+
+    :param request: the current request
+    :param post_id: the id of the post to be shared
+    :return: the rendered post share page
+    """
     # Retrieve post by id
     post = get_object_or_404(
         Post,
@@ -93,6 +111,13 @@ def post_share(request, post_id):
 
 @require_POST
 def post_comment(request, post_id):
+    """
+    Handles POST requests to add comments to a post.
+
+    :param request: the current request
+    :param post_id: the ID of the post to add the comment to
+    :return: a redirect to the post detail page
+    """
     post = get_object_or_404(
         Post,
         id=post_id,
